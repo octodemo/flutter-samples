@@ -14,4 +14,4 @@ jobs:
     - name: Running Horusec Security on form_app
       run: |
         curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
-        horusec start -p="./form_app" -e="true" -D -o="sarif"
+        horusec start -p="./" -e="true" -D -o="sarif" -O="horusec-results.sarif"
