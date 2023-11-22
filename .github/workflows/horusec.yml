@@ -11,7 +11,51 @@ jobs:
       uses: actions/checkout@v2
       with: # Required when commit authors is enabled
         fetch-depth: 0
+        #  Flags:
+        #    -t, --analysis-timeout int                 The timeout threshold for the Horusec CLI wait for the analysis to complete. The minimum time is 10 (default 600)
+        #    -a, --authorization string                 Authorization token to use on Horusec server. Read more: https://docs.horusec.io/docs/tutorials/how-to-create-an-authorization-token (default "00000000-0000-0000-0000-000000000000")
+        #    -C, --certificate-path string              Path to certificate of authority. Example -C="example/ca.crt"
+        #    -P, --container-bind-project-path string   Project path in host to be used on Docker when running Horusec inside a container
+        #    -c, --custom-rules-path string             Path with custom rules that should be used by Horusec engine
+        #    -D, --disable-docker                       Run Horusec without docker. If enabled it will only run the following tools: horusec-csharp, horusec-kotlin, horusec-java, horusec-kubernetes, horusec-leaks, horusec-javascript, horusec-dart, horusec-nginx
+        #    -G, --enable-commit-author                 Enable to search commit author of vulnerabilities
+        #        --enable-git-history                   Run Gitleaks and search for vulnerabilities in all git history of the project https://github.com/zricethezav/gitleaks
+        #    -w, --enable-owasp-dependency-check        Run Owasp Dependency Check tool https://github.com/jeremylong/DependencyCheck
+        #    -j, --enable-shellcheck                    Run ShellCheck tool https://github.com/koalaman/shellcheck
+        #    -F, --false-positive strings               Ignore a vulnerability by hash and set it to be false positive. Example -F="hash1, hash2"
+        #        --headers stringToString               Custom headers to send on request to Horusec API. Example --headers='{"X-Auth-Service": "value"}' (default [])
+        #    -h, --help                                 help for start
+        #    -u, --horusec-url string                   The Horusec server address to send analysis results (default "http://0.0.0.0:8000")
+        #    -i, --ignore strings                       Paths to ignore in the analysis. Example: -i="/path/to/ignore, **/*_test.go, **/assets/**" (default [*tmp*,**/.vscode/**])
+        #    -s, --ignore-severity strings              The level of vulnerabilities to ignore in the output ("LOW"|"MEDIUM"|"HIGH"). Example: -s="LOW, HIGH" (default [INFO])
+        #    -I, --information-severity                 Enable information severity vulnerabilities. Information vulnerabilities can contain a lot of false positives
+        #    -S, --insecure-skip-verify                 Disable the certification validation. PLEASE, try not to use it
+        #    -O, --json-output-file string              Output file to write analysis result. This flag should be used with --output-format
+        #    -o, --output-format string                 Output format of analysis ("text"|"json"|"sarif"|"sonarqube"). For json, sarif, and sonarqube --json-output-file is required
+        #    -p, --project-path string                  Path to run an analysis. If this value is not passed, Horusec will ask if you want to run the analysis in the current directory (default "/home/runner/work/flutter-samples/flutter-samples")
+        #    -n, --repository-name string               Send repository name to Horusec server, by default sends the actual directory name (default "flutter-samples")
+        #    -r, --request-timeout int                  The timeout threshold for the request to the Horusec server. The minimum time is 10 (default 300)
+        #    -e, --return-error                         Return exit code 1 if found vulnerabilities. Default value is false (exit code 0)
+        #    -R, --risk-accept strings                  Ignore a vulnerability by hash and set it to be risk accept. Example -R="hash1, hash2"
+        #        --show-vulnerabilities-types strings   Show vulnerabilities by types ("Vulnerability"|"Risk Accepted"|"False Positive"|"Corrected"). Example --show-vulnerabilities-types="Vulnerability, Risk Accepted" (default [Vulnerability])
+        #  
+        #  Global Flags:
+        #        --config-file-path string   Path of the configuration file (default "/home/runner/work/flutter-samples/flutter-samples/horusec-config.json")
+        #    -l, --log-file-path string      Path of log file (default "/tmp/horusec-2023-11-22-21-17-45.log")
+        #        --log-level string          Set log level ("panic"|"fatal"|"error"|"warn"|"info"|"debug"|"trace") (default "info")        
     - name: Running Horusec Security on form_app
       run: |
         curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
-        horusec start -p="./" -e="true" -D -o="sarif" -O="horusec-results.sarif"
+        horusec start --project-path="./" --return-error="false" --information-severity --disable-docker --output-format="sarif" --json-output-file="horusec-results.sarif"
+
+    - name: Upload results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+          sarif_file: horusec-results.sarif
+
+    - name: Upload CodeQL Analysis as artifact
+      uses: actions/upload-artifact@v3
+      with:        
+        path: horusec-results.sarif
+
+    
