@@ -21,7 +21,7 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - uses: subosito/flutter-action@d8687e6979e8ef66d2b2970e2c92c1d8e801d7bf
+      - uses: subosito/flutter-action@44ac965b96f18d999802d4b807e3256d5a3f9fa1
 
       - name: Init scripts
         run: dart pub get
