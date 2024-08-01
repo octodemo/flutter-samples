@@ -38,7 +38,7 @@ jobs:
       - run: ./tool/flutter_ci_script_${{ matrix.flutter_version }}.sh
   android-build:
     runs-on: ubuntu-latest
-    if: github.repository == 'flutter/samples'
+    if: github.repository == 'octodemo-forks/flutter-samples'
     steps:
       - uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748
       - uses: actions/setup-java@860f60056505705214d223b91ed7a30f173f6142
@@ -51,7 +51,7 @@ jobs:
       - run: ./tool/android_ci_script.sh
   ios-build:
     runs-on: macos-latest
-    if: github.repository == 'flutter/samples'
+    if: github.repository == 'octodemo-forks/flutter-samples'
     steps:
       - uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748
       - uses: actions/setup-java@860f60056505705214d223b91ed7a30f173f6142
