@@ -11,8 +11,7 @@ import 'common.dart';
 void main() async {
   final packageDirs = listPackageDirs(Directory.current)
       .map((path) => p.relative(path, from: Directory.current.path))
-      // TODO: remove this when `slide_puzzle` is removed from samples repo
-      .where((path) => !path.contains('slide_puzzle'))
+      .where((path) => !p.dirname(path).startsWith('_'))
       .toList();
 
   print('Package dirs:\n${packageDirs.map((path) => '  $path').join('\n')}');
@@ -21,15 +20,23 @@ void main() async {
   for (var i = 0; i < packageDirs.length; i++) {
     final dir = packageDirs[i];
     logWrapped(ansiMagenta, '\n$dir (${i + 1} of ${packageDirs.length})');
-    results.add(await run(dir, 'flutter', [
+
+    final upgradeResult = await run(dir, 'flutter', [
       'pub',
       'pub',
       'upgrade',
       '--no-precompile',
-    ]));
+    ]);
+
+    results.add(upgradeResult);
+    if (!upgradeResult) {
+      // skipping analyze when `pub upgrade` fails.
+      results.add(false);
+      continue;
+    }
     results.add(await run(
       dir,
-      'flutter',
+      'dart',
       ['analyze', '--fatal-infos', '--fatal-warnings', '.'],
     ));
     _printStatus(results);

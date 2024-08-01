@@ -6,7 +6,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sensors/sensors.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 
 // This is on alternate entrypoint for this module to display Flutter UI in
 // a (multi-)view integration scenario.
@@ -94,7 +94,7 @@ class _CellState extends State<Cell> with WidgetsBindingObserver {
                           // Show a number provided by the platform based on
                           // the cell's index.
                           cellNumber.toString(),
-                          style: Theme.of(context).textTheme.headline3,
+                          style: Theme.of(context).textTheme.displaySmall,
                         ),
                       ],
                     ),
@@ -109,7 +109,7 @@ class _CellState extends State<Cell> with WidgetsBindingObserver {
                         // Don't continuously rebuild for nothing when the
                         // cell isn't visible.
                         stream: appLifecycleState == AppLifecycleState.resumed
-                            ? accelerometerEvents
+                            ? accelerometerEventStream()
                             : Stream.value(defaultPosition),
                         initialData: defaultPosition,
                         builder: (context, snapshot) {

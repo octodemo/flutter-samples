@@ -56,10 +56,11 @@ class _PerformancePageState extends State<PerformancePage> {
                   builder: (context, snapshot) {
                     return ElevatedButton(
                       style: ElevatedButton.styleFrom(elevation: 8.0),
-                      onPressed:
-                          snapshot.connectionState == ConnectionState.done
-                              ? () => handleComputeOnMain(context)
-                              : null,
+                      onPressed: switch (snapshot.connectionState) {
+                        ConnectionState.done => () =>
+                            handleComputeOnMain(context),
+                        _ => null
+                      },
                       child: const Text('Compute on Main'),
                     );
                   },
@@ -69,10 +70,11 @@ class _PerformancePageState extends State<PerformancePage> {
                   builder: (context, snapshot) {
                     return ElevatedButton(
                         style: ElevatedButton.styleFrom(elevation: 8.0),
-                        onPressed:
-                            snapshot.connectionState == ConnectionState.done
-                                ? () => handleComputeOnSecondary(context)
-                                : null,
+                        onPressed: switch (snapshot.connectionState) {
+                          ConnectionState.done => () =>
+                              handleComputeOnSecondary(context),
+                          _ => null
+                        },
                         child: const Text('Compute on Secondary'));
                   },
                 ),
@@ -90,6 +92,7 @@ class _PerformancePageState extends State<PerformancePage> {
         var snackBar = const SnackBar(
           content: Text('Main Isolate Done!'),
         );
+        if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       });
 
@@ -104,6 +107,7 @@ class _PerformancePageState extends State<PerformancePage> {
         var snackBar = const SnackBar(
           content: Text('Secondary Isolate Done!'),
         );
+        if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       });
 
