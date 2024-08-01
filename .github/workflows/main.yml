@@ -20,7 +20,7 @@ jobs:
   flutter-tests:
     name: Test Flutter ${{ matrix.flutter_version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    if: github.repository == 'flutter/samples'
+    if: github.repository == 'octodemo-forks/flutter-samples'
     strategy:
       fail-fast: false
       matrix:
